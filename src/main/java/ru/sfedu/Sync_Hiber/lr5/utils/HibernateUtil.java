@@ -5,7 +5,7 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-import ru.sfedu.Sync_Hiber.lr4.models.Channel;
+import ru.sfedu.Sync_Hiber.lr5.models.*;
 
 import java.io.File;
 
@@ -30,7 +30,11 @@ public class HibernateUtil {
 
             MetadataSources metadataSources =
                     new MetadataSources(serviceRegistry);
+            metadataSources.addAnnotatedClass(Manager.class);
+            metadataSources.addAnnotatedClass(Speaker.class);
             metadataSources.addAnnotatedClass(Channel.class);
+            metadataSources.addAnnotatedClass(Zone.class);
+            metadataSources.addAnnotatedClass(Guest.class);
             sessionFactory = metadataSources.buildMetadata().buildSessionFactory();
         }
 

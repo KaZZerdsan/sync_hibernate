@@ -35,7 +35,7 @@ public class Channel {
     @ElementCollection
     @CollectionTable(name = "Features")
     @MapKeyColumn(name = "Feature")
-    @Column()
+    @Column
     private Map<String, String> features;
 
     @ElementCollection

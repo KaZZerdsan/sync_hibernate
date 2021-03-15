@@ -1,9 +1,9 @@
 package ru.sfedu.Sync_Hiber.lr5.models;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+@Entity
+@Table
 public class Speaker {
     @Id
     @GeneratedValue(generator = "increment")
@@ -34,6 +34,7 @@ public class Speaker {
     @Override
     public String toString() {
         return "Speaker{" +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
     }

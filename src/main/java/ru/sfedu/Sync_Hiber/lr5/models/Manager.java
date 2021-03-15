@@ -1,9 +1,9 @@
 package ru.sfedu.Sync_Hiber.lr5.models;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+@Entity
+@Table
 public class Manager {
     @Id
     @GeneratedValue(generator = "increment")
@@ -12,6 +12,9 @@ public class Manager {
 
     @Column
     private String name;
+
+    @OneToOne(mappedBy = "manager", cascade = CascadeType.ALL)
+    private Zone zone;
 
     public Manager() {}
 
@@ -31,11 +34,20 @@ public class Manager {
         this.name = name;
     }
 
+    public Zone getZone() {
+        return zone;
+    }
+
+    public void setZone(Zone zone) {
+        this.zone = zone;
+    }
+
     @Override
     public String toString() {
         return "Manager{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", zone=" + zone +
                 '}';
     }
 }

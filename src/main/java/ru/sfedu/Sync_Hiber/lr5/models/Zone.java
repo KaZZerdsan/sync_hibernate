@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table
 public class Zone {
     @Id
     @GeneratedValue(generator = "increment")
@@ -20,11 +22,23 @@ public class Zone {
     private long dateEnd;
 
     @Column
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Channel> channelList;
 
     @Column(columnDefinition = "TINYINT")
     private Boolean status;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "man_id", referencedColumnName = "id")
+    private Manager manager;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "ZONE_GUESTS",
+            joinColumns = @JoinColumn(name = "Zone_id"),
+            inverseJoinColumns = @JoinColumn(name = "Guest_id")
+    )
+    private List<Guest> guests;
 
     public Zone() {}
 
@@ -48,7 +62,7 @@ public class Zone {
         return dateStart;
     }
 
-    public void setDateStart(Long dateStart) {
+    public void setDateStart(long dateStart) {
         this.dateStart = dateStart;
     }
 
@@ -76,6 +90,22 @@ public class Zone {
         this.status = status;
     }
 
+    public Manager getManager() {
+        return manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
+
+    public List<Guest> getGuests() {
+        return guests;
+    }
+
+    public void setGuests(List<Guest> guests) {
+        this.guests = guests;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -96,6 +126,7 @@ public class Zone {
     public String toString() {
         return "Zone{" +
                 "id=" + id +
+//                ", manager=" + manager +
                 ", name='" + name + '\'' +
                 ", dateStart=" + dateStart +
                 ", dateEnd=" + dateEnd +

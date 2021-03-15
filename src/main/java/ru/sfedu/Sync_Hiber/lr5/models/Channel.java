@@ -22,7 +22,7 @@ public class Channel {
     private Boolean status;
 
     @Column
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Speaker> speakers;
 
     public Channel() {}

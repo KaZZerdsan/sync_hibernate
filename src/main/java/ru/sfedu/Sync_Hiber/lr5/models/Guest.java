@@ -4,7 +4,8 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-public class Event {
+@Entity
+public class Guest {
     @Id
     @GeneratedValue(generator = "increment")
     @Column
@@ -13,17 +14,12 @@ public class Event {
     @Column
     private String name;
 
-    @Column
-    @OneToOne
-    private Manager manager;
-
-    @Column
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "guests")
     private List<Zone> zoneList;
 
-    public Event() {}
+    public Guest() {};
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
@@ -39,15 +35,6 @@ public class Event {
         this.name = name;
     }
 
-    public Manager getManager() {
-        return manager;
-    }
-
-    public void setManager(Manager manager) {
-        this.manager = manager;
-    }
-
-
     public List<Zone> getZoneList() {
         return zoneList;
     }
@@ -60,22 +47,20 @@ public class Event {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Event event = (Event) o;
-        return Objects.equals(manager, event.manager) &&
-                Objects.equals(zoneList, event.zoneList);
+        Guest guest = (Guest) o;
+        return id == guest.id && Objects.equals(name, guest.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(manager, zoneList);
+        return Objects.hash(id, name);
     }
 
     @Override
     public String toString() {
-        return "Event{" +
+        return "Guest{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", manager=" + manager +
                 ", zoneList=" + zoneList +
                 '}';
     }

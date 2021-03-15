@@ -1,6 +1,8 @@
 package ru.sfedu.Sync_Hiber;
 
 public class Constants {
+    public static final String LOG_NO_ARGS = "No arguments were given";
+
     //  LR 1
     public static final String LOG_DB_SIZE_IN_MB = "DB size is %s Mb";
     public static final String LOG_TABLES = "Tables: ";
@@ -12,7 +14,13 @@ public class Constants {
     public static final String GET_USERS_QUERY = "SELECT user FROM mysql.user;";
     public static final String GET_VERSION_QUERY = "SELECT VERSION();";
 
-    //  LR 2
+    //  LR 2-5
 
     public static final String GET_QUERY = "FROM %s";
+
+    //  LR 5
+
+    public static final String ZONE = "Zone";
+    public static final String GET_COUNT = "select count(*) from %s";
+    public static final String TIME_TAKEN = "Time: %ss";
 }

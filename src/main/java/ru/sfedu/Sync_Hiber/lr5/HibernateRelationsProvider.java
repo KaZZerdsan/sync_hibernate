@@ -2,13 +2,16 @@ package ru.sfedu.Sync_Hiber.lr5;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import ru.sfedu.Sync_Hiber.Constants;
 import ru.sfedu.Sync_Hiber.lr5.models.*;
 import ru.sfedu.Sync_Hiber.lr5.utils.HibernateUtil;
 
+import java.math.BigInteger;
 import java.util.List;
 
 public class HibernateRelationsProvider {
@@ -24,51 +27,49 @@ public class HibernateRelationsProvider {
         session.close();
     }
 
-    public List<Admin> getAdmins () {
-        String query = String.format(Constants.GET_QUERY, Admin.class.getSimpleName());
+    public Guest createGuest(Guest guest) {
         initSession();
-        Transaction tx = session.getTransaction();
-        List<Admin> adminList = session.createQuery(query).list();
+        Transaction tx = session.beginTransaction();
+        guest.setId((Long) session.save(guest));
         tx.commit();
+        log.debug(guest);
         close();
-        return adminList;
+        return guest;
     }
 
-
-    public Admin createAdmin(Admin admin) {
+    public List<Guest> getGuests () {
+        String query = String.format(Constants.GET_QUERY, Guest.class.getSimpleName());
         initSession();
-        Transaction tx = session.getTransaction();
-        admin.setId((long) session.save(admin));
+        Transaction tx = session.beginTransaction();
+        List<Guest> guestList = session.createQuery(query).list();
         tx.commit();
-        log.debug(admin);
+        log.debug(guestList);
         close();
-        return admin;
+        return guestList;
     }
 
-
-    public Admin getAdminById(long id) {
+    public Guest getGuestById(long id) {
         initSession();
         try {
-            Admin admin = session.get(Admin.class, id);
-            log.debug(admin);
+            Guest guest = session.get(Guest.class, id);
+            log.debug(guest);
             close();
-            return admin;
+            return guest;
         }
         catch(Exception e) {
             log.error("Not found.");
             close();
-            return new Admin();
+            return new Guest();
         }
     }
 
-
-    public Boolean deleteAdmin(long id) {
+    public Boolean deleteGuest(long id) {
         initSession();
-        Admin admin = new Admin();
-        admin.setId(id);
+        Guest guest = new Guest();
+        guest.setId(id);
         try {
             Transaction tr = session.beginTransaction();
-            session.delete(admin);
+            session.delete(guest);
             tr.commit();
             close();
             return true;
@@ -80,22 +81,22 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Admin updateAdmin (Admin admin) {
+    public Guest updateGuest (Guest guest) {
         initSession();
         Transaction tr = session.beginTransaction();
-        session.update(admin);
+        session.update(guest);
         tr.commit();
         close();
-        return admin;
+        return guest;
     }
-
 
     public List<Manager> getManagers () {
         String query = String.format(Constants.GET_QUERY, Manager.class.getSimpleName());
         initSession();
-        Transaction tx = session.getTransaction();
+        Transaction tx = session.beginTransaction();
         List<Manager> managerList = session.createQuery(query).list();
         tx.commit();
+        log.debug(managerList);
         close();
         return managerList;
     }
@@ -103,7 +104,7 @@ public class HibernateRelationsProvider {
 
     public Manager createManager(Manager manager) {
         initSession();
-        Transaction tx = session.getTransaction();
+        Transaction tx = session.beginTransaction();
         manager.setId((long) session.save(manager));
         tx.commit();
         log.debug(manager);
@@ -159,9 +160,10 @@ public class HibernateRelationsProvider {
     public List<Speaker> getSpeakers () {
         String query = String.format(Constants.GET_QUERY, Speaker.class.getSimpleName());
         initSession();
-        Transaction tx = session.getTransaction();
+        Transaction tx = session.beginTransaction();
         List<Speaker> speakerList = session.createQuery(query).list();
         tx.commit();
+        log.debug(speakerList);
         close();
         return speakerList;
     }
@@ -169,7 +171,7 @@ public class HibernateRelationsProvider {
 
     public Speaker createSpeaker(Speaker speaker) {
         initSession();
-        Transaction tx = session.getTransaction();
+        Transaction tx = session.beginTransaction();
         speaker.setId((long) session.save(speaker));
         tx.commit();
         log.debug(speaker);
@@ -225,17 +227,19 @@ public class HibernateRelationsProvider {
     public List<Channel> getChannels () {
         String query = String.format(Constants.GET_QUERY, Channel.class.getSimpleName());
         initSession();
-        Transaction tx = session.getTransaction();
+        Transaction tx = session.beginTransaction();
         List<Channel> channelList = session.createQuery(query).list();
         tx.commit();
+        log.debug(channelList);
         close();
         return channelList;
     }
 
 
     public Channel createChannel(Channel channel) {
+        channel.getSpeakers().stream().forEach(this::createSpeaker);
         initSession();
-        Transaction tx = session.getTransaction();
+        Transaction tx = session.beginTransaction();
         channel.setId((long) session.save(channel));
         tx.commit();
         log.debug(channel);
@@ -291,17 +295,21 @@ public class HibernateRelationsProvider {
     public List<Zone> getZones () {
         String query = String.format(Constants.GET_QUERY, Zone.class.getSimpleName());
         initSession();
-        Transaction tx = session.getTransaction();
+        Transaction tx = session.beginTransaction();
         List<Zone> zoneList = session.createQuery(query).list();
         tx.commit();
+        log.debug(zoneList);
         close();
         return zoneList;
     }
 
 
     public Zone createZone(Zone zone) {
+        zone.getChannelList().stream().forEach(this::createChannel);
+        zone.getGuests().stream().forEach(this::createGuest);
+        createManager(zone.getManager());
         initSession();
-        Transaction tx = session.getTransaction();
+        Transaction tx = session.beginTransaction();
         zone.setId((long) session.save(zone));
         tx.commit();
         log.debug(zone);
@@ -343,7 +351,6 @@ public class HibernateRelationsProvider {
         }
     }
 
-
     public Zone updateZone (Zone zone) {
         initSession();
         Transaction tr = session.beginTransaction();
@@ -353,69 +360,53 @@ public class HibernateRelationsProvider {
         return zone;
     }
 
-
-    public List<Event> getEvents () {
-        String query = String.format(Constants.GET_QUERY, Event.class.getSimpleName());
+    public BigInteger getZoneCountNative() {
         initSession();
-        Transaction tx = session.getTransaction();
-        List<Event> eventList = session.createQuery(query).list();
-        tx.commit();
+        String query = String.format(Constants.GET_COUNT, Constants.ZONE);
+        BigInteger count = (BigInteger) session.createSQLQuery(query).list().get(0);
+        log.debug(count);
         close();
-        return eventList;
+        return count;
     }
 
-
-    public Event createEvent(Event event) {
+    public Long getZoneCountHQL() {
         initSession();
-        Transaction tx = session.getTransaction();
-        event.setId((long) session.save(event));
-        tx.commit();
-        log.debug(event);
+        String query = String.format(Constants.GET_COUNT, Constants.ZONE);
+        Long count = (Long) session.createQuery(query).list().get(0);
+        log.debug(count);
         close();
-        return event;
+        return count;
     }
 
-
-    public Event getEventById(long id) {
+    public Long getZoneCountCriteria() {
         initSession();
-        try {
-            Event event = session.get(Event.class, id);
-            log.debug(event);
-            close();
-            return event;
-        }
-        catch(Exception e) {
-            log.error("Not found.");
-            close();
-            return new Event();
-        }
-    }
-
-
-    public Boolean deleteEvent(long id) {
-        initSession();
-        Event event = new Event();
-        event.setId(id);
-        try {
-            Transaction tr = session.beginTransaction();
-            session.delete(event);
-            tr.commit();
-            close();
-            return true;
-        } catch (Exception e) {
-            log.error(e);
-            close();
-            return false;
-        }
-    }
-
-
-    public Event updateEvent (Event event) {
-        initSession();
-        Transaction tr = session.beginTransaction();
-        session.update(event);
-        tr.commit();
+        Criteria cr = session.createCriteria(Zone.class);
+        cr.setProjection(Projections.count("id"));
+        Long count = (Long) cr.list().get(0);
+        log.debug(count);
         close();
-        return event;
+        return count;
     }
+
+    public long checkTimeHQL() {
+        long timeStart = System.currentTimeMillis();
+        getZoneCountHQL();
+        long timeEnd = System.currentTimeMillis();
+        return timeEnd - timeStart;
+    }
+
+    public long checkTimeNative() {
+        long timeStart = System.currentTimeMillis();
+        getZoneCountNative();
+        long timeEnd = System.currentTimeMillis();
+        return timeEnd - timeStart;
+    }
+
+    public long checkTimeCriteria() {
+        long timeStart = System.currentTimeMillis();
+        getZoneCountCriteria();
+        long timeEnd = System.currentTimeMillis();
+        return timeEnd - timeStart;
+    }
+
 }
