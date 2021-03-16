@@ -6,6 +6,7 @@ import org.junit.Test;
 import ru.sfedu.Sync_Hiber.lr4.models.Channel;
 import ru.sfedu.Sync_Hiber.lr4.models.Speaker;
 
+import java.io.IOException;
 import java.util.*;
 
 public class HibernateEntityProviderTest {
@@ -14,7 +15,7 @@ public class HibernateEntityProviderTest {
     private HibernateEntityProvider dp = new HibernateEntityProvider();
 
     @Test
-    public void createChannel() {
+    public void createChannel() throws IOException {
         Map<String, String> features = new HashMap<String, String>();
         features.put("Drinks", "Yes");
         features.put("Food", "Yes");
@@ -44,27 +45,27 @@ public class HibernateEntityProviderTest {
     }
 
     @Test
-    public void getChannels() {
+    public void getChannels() throws IOException {
         List<Channel> channelList = dp.getChannels();
         log.info(channelList);
     }
 
     @Test
-    public void getChannelById() {
+    public void getChannelById() throws IOException {
         long id = 1;
         Channel channel = dp.getChannelById(id);
         log.info(channel);
     }
 
     @Test
-    public void deleteChannel() {
+    public void deleteChannel() throws IOException {
         long id = 2;
         Boolean isDeleted = dp.deleteChannel(id);
         log.info(isDeleted);
     }
 
     @Test
-    public void updateChannel() {
+    public void updateChannel() throws IOException {
         long id = 3;
         Channel channel = dp.getChannelById(id);
         channel.setName("RenTV");

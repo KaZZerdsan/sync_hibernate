@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import ru.sfedu.Sync_Hiber.lr3.joined.models.Admin;
 
+import java.io.IOException;
 import java.util.List;
 
 public class HibernateEntityProviderTest {
@@ -14,7 +15,7 @@ public class HibernateEntityProviderTest {
     private Logger log = LogManager.getLogger(ru.sfedu.Sync_Hiber.lr3.mapped.HibernateEntityProviderTest.class);
 
     @Test
-    public void createAdmin() {
+    public void createAdmin() throws IOException {
         Admin admin = new Admin();
         admin.setName("Anatoliy");
         admin.setAge(38);
@@ -23,14 +24,14 @@ public class HibernateEntityProviderTest {
     }
 
     @Test
-    public void getAdmins() {
+    public void getAdmins() throws IOException {
         List<Admin> admins = dp.getAdmins();
         log.info(admins.toString());
         Assert.assertNotNull(admins);
     }
 
     @Test
-    public void getAdminById() {
+    public void getAdminById() throws IOException {
         long id = 4;
         Admin admin = dp.getAdminById(id);
         log.info(admin);
@@ -38,14 +39,14 @@ public class HibernateEntityProviderTest {
     }
 
     @Test
-    public void deleteAdmin() {
+    public void deleteAdmin() throws IOException {
         long id = 1;
         Boolean hasDeleted = dp.deleteAdmin(id);
         Assert.assertEquals(hasDeleted, true);
     }
 
     @Test
-    public void updateAdmin() {
+    public void updateAdmin() throws IOException {
         Admin admin = new Admin();
         admin.setId(3);
         admin.setName("Vasily");

@@ -8,6 +8,7 @@ import org.junit.Test;
 import ru.sfedu.Sync_Hiber.lr2.models.Address;
 import ru.sfedu.Sync_Hiber.lr2.models.Admin;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -18,7 +19,7 @@ public class HibernateEntityProviderTest {
     private HibernateEntityProvider dp = new HibernateEntityProvider();
 
     @Test
-    public void createAdmin() {
+    public void createAdmin() throws IOException {
         Admin admin = new Admin();
         Address address = new Address();
         address.setCity("Rostov-on-Don");
@@ -30,29 +31,29 @@ public class HibernateEntityProviderTest {
     }
 
     @Test
-    public void getAdmins() {
+    public void getAdmins() throws IOException {
         List<Admin> admins = dp.getAdmins();
         log.info(admins.toString());
         Assert.assertNotNull(admins);
     }
 
     @Test
-    public void getAdminById() {
-        long id = 4;
+    public void getAdminById() throws IOException {
+        long id = 124;
         Admin admin = dp.getAdminById(id);
         log.info(admin);
         Assert.assertTrue(admin.getId() == id);
     }
 
     @Test
-    public void deleteAdmin() {
+    public void deleteAdmin() throws IOException {
         long id = 1;
         Boolean hasDeleted = dp.deleteAdmin(id);
         Assert.assertEquals(hasDeleted, true);
     }
 
     @Test
-    public void updateAdmin() {
+    public void updateAdmin() throws IOException {
         Admin admin = new Admin();
         admin.setId(3);
         admin.setName("Vasily");

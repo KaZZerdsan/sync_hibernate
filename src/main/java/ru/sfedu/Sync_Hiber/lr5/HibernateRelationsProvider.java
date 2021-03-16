@@ -11,6 +11,7 @@ import ru.sfedu.Sync_Hiber.Constants;
 import ru.sfedu.Sync_Hiber.lr5.models.*;
 import ru.sfedu.Sync_Hiber.lr5.utils.HibernateUtil;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class HibernateRelationsProvider {
     private Logger log = LogManager.getLogger(HibernateRelationsProvider.class);
     private Session session;
 
-    private void initSession() {
+    private void initSession() throws IOException {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         session = sessionFactory.openSession();
     }
@@ -27,7 +28,7 @@ public class HibernateRelationsProvider {
         session.close();
     }
 
-    public Guest createGuest(Guest guest) {
+    public Guest createGuest(Guest guest) throws IOException {
         initSession();
         Transaction tx = session.beginTransaction();
         guest.setId((Long) session.save(guest));
@@ -37,7 +38,7 @@ public class HibernateRelationsProvider {
         return guest;
     }
 
-    public List<Guest> getGuests () {
+    public List<Guest> getGuests () throws IOException {
         String query = String.format(Constants.GET_QUERY, Guest.class.getSimpleName());
         initSession();
         Transaction tx = session.beginTransaction();
@@ -48,22 +49,25 @@ public class HibernateRelationsProvider {
         return guestList;
     }
 
-    public Guest getGuestById(long id) {
+    public Guest getGuestById(long id) throws IOException {
         initSession();
         try {
             Guest guest = session.get(Guest.class, id);
             log.debug(guest);
             close();
+            if (guest == null) {
+                log.error("Not found.");
+                guest = new Guest();
+            }
             return guest;
         }
         catch(Exception e) {
-            log.error("Not found.");
             close();
             return new Guest();
         }
     }
 
-    public Boolean deleteGuest(long id) {
+    public Boolean deleteGuest(long id) throws IOException {
         initSession();
         Guest guest = new Guest();
         guest.setId(id);
@@ -81,7 +85,7 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Guest updateGuest (Guest guest) {
+    public Guest updateGuest (Guest guest) throws IOException {
         initSession();
         Transaction tr = session.beginTransaction();
         session.update(guest);
@@ -90,7 +94,7 @@ public class HibernateRelationsProvider {
         return guest;
     }
 
-    public List<Manager> getManagers () {
+    public List<Manager> getManagers () throws IOException {
         String query = String.format(Constants.GET_QUERY, Manager.class.getSimpleName());
         initSession();
         Transaction tx = session.beginTransaction();
@@ -102,7 +106,7 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Manager createManager(Manager manager) {
+    public Manager createManager(Manager manager) throws IOException {
         initSession();
         Transaction tx = session.beginTransaction();
         manager.setId((long) session.save(manager));
@@ -113,23 +117,26 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Manager getManagerById(long id) {
+    public Manager getManagerById(long id) throws IOException {
         initSession();
         try {
             Manager manager = session.get(Manager.class, id);
             log.debug(manager);
             close();
+            if (manager == null) {
+                log.error("Not found.");
+                manager = new Manager();
+            }
             return manager;
         }
         catch(Exception e) {
-            log.error("Not found.");
             close();
             return new Manager();
         }
     }
 
 
-    public Boolean deleteManager(long id) {
+    public Boolean deleteManager(long id) throws IOException {
         initSession();
         Manager manager = new Manager();
         manager.setId(id);
@@ -147,7 +154,7 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Manager updateManager (Manager manager) {
+    public Manager updateManager (Manager manager) throws IOException {
         initSession();
         Transaction tr = session.beginTransaction();
         session.update(manager);
@@ -157,7 +164,7 @@ public class HibernateRelationsProvider {
     }
 
 
-    public List<Speaker> getSpeakers () {
+    public List<Speaker> getSpeakers () throws IOException {
         String query = String.format(Constants.GET_QUERY, Speaker.class.getSimpleName());
         initSession();
         Transaction tx = session.beginTransaction();
@@ -169,7 +176,7 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Speaker createSpeaker(Speaker speaker) {
+    public Speaker createSpeaker(Speaker speaker) throws IOException {
         initSession();
         Transaction tx = session.beginTransaction();
         speaker.setId((long) session.save(speaker));
@@ -180,23 +187,26 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Speaker getSpeakerById(long id) {
+    public Speaker getSpeakerById(long id) throws IOException {
         initSession();
         try {
             Speaker speaker = session.get(Speaker.class, id);
             log.debug(speaker);
             close();
+            if (speaker == null) {
+                log.error("Not found.");
+                speaker = new Speaker();
+            }
             return speaker;
         }
         catch(Exception e) {
-            log.error("Not found.");
             close();
             return new Speaker();
         }
     }
 
 
-    public Boolean deleteSpeaker(long id) {
+    public Boolean deleteSpeaker(long id) throws IOException {
         initSession();
         Speaker speaker = new Speaker();
         speaker.setId(id);
@@ -214,7 +224,7 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Speaker updateSpeaker (Speaker speaker) {
+    public Speaker updateSpeaker (Speaker speaker) throws IOException {
         initSession();
         Transaction tr = session.beginTransaction();
         session.update(speaker);
@@ -224,7 +234,7 @@ public class HibernateRelationsProvider {
     }
 
 
-    public List<Channel> getChannels () {
+    public List<Channel> getChannels () throws IOException {
         String query = String.format(Constants.GET_QUERY, Channel.class.getSimpleName());
         initSession();
         Transaction tx = session.beginTransaction();
@@ -236,8 +246,10 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Channel createChannel(Channel channel) {
-        channel.getSpeakers().stream().forEach(this::createSpeaker);
+    public Channel createChannel(Channel channel) throws IOException {
+        for (Speaker speaker : channel.getSpeakers()) {
+            createSpeaker(speaker);
+        }
         initSession();
         Transaction tx = session.beginTransaction();
         channel.setId((long) session.save(channel));
@@ -248,23 +260,26 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Channel getChannelById(long id) {
+    public Channel getChannelById(long id) throws IOException {
         initSession();
         try {
             Channel channel = session.get(Channel.class, id);
             log.debug(channel);
             close();
+            if (channel == null) {
+                log.error("Not found.");
+                channel = new Channel();
+            }
             return channel;
         }
         catch(Exception e) {
-            log.error("Not found.");
             close();
             return new Channel();
         }
     }
 
 
-    public Boolean deleteChannel(long id) {
+    public Boolean deleteChannel(long id) throws IOException {
         initSession();
         Channel channel = new Channel();
         channel.setId(id);
@@ -282,7 +297,7 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Channel updateChannel (Channel channel) {
+    public Channel updateChannel (Channel channel) throws IOException {
         initSession();
         Transaction tr = session.beginTransaction();
         session.update(channel);
@@ -292,7 +307,7 @@ public class HibernateRelationsProvider {
     }
 
 
-    public List<Zone> getZones () {
+    public List<Zone> getZones () throws IOException {
         String query = String.format(Constants.GET_QUERY, Zone.class.getSimpleName());
         initSession();
         Transaction tx = session.beginTransaction();
@@ -304,9 +319,13 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Zone createZone(Zone zone) {
-        zone.getChannelList().stream().forEach(this::createChannel);
-        zone.getGuests().stream().forEach(this::createGuest);
+    public Zone createZone(Zone zone) throws IOException {
+        for (Channel channel : zone.getChannelList()) {
+            createChannel(channel);
+        }
+        for (Guest guest : zone.getGuests()) {
+            createGuest(guest);
+        }
         createManager(zone.getManager());
         initSession();
         Transaction tx = session.beginTransaction();
@@ -318,23 +337,26 @@ public class HibernateRelationsProvider {
     }
 
 
-    public Zone getZoneById(long id) {
+    public Zone getZoneById(long id) throws IOException {
         initSession();
         try {
             Zone zone = session.get(Zone.class, id);
             log.debug(zone);
             close();
+            if (zone == null) {
+                log.error("Not found.");
+                zone = new Zone();
+            }
             return zone;
         }
         catch(Exception e) {
-            log.error("Not found.");
             close();
             return new Zone();
         }
     }
 
 
-    public Boolean deleteZone(long id) {
+    public Boolean deleteZone(long id) throws IOException {
         initSession();
         Zone zone = new Zone();
         zone.setId(id);
@@ -351,7 +373,13 @@ public class HibernateRelationsProvider {
         }
     }
 
-    public Zone updateZone (Zone zone) {
+    public Zone updateZone (Zone zone) throws IOException {
+        for (Channel channel : zone.getChannelList()) {
+            createChannel(channel);
+        }
+        for (Guest guest : zone.getGuests()) {
+            createGuest(guest);
+        }
         initSession();
         Transaction tr = session.beginTransaction();
         session.update(zone);
@@ -360,7 +388,7 @@ public class HibernateRelationsProvider {
         return zone;
     }
 
-    public BigInteger getZoneCountNative() {
+    public BigInteger getZoneCountNative() throws IOException {
         initSession();
         String query = String.format(Constants.GET_COUNT, Constants.ZONE);
         BigInteger count = (BigInteger) session.createSQLQuery(query).list().get(0);
@@ -369,7 +397,7 @@ public class HibernateRelationsProvider {
         return count;
     }
 
-    public Long getZoneCountHQL() {
+    public Long getZoneCountHQL() throws IOException {
         initSession();
         String query = String.format(Constants.GET_COUNT, Constants.ZONE);
         Long count = (Long) session.createQuery(query).list().get(0);
@@ -378,7 +406,7 @@ public class HibernateRelationsProvider {
         return count;
     }
 
-    public Long getZoneCountCriteria() {
+    public Long getZoneCountCriteria() throws IOException {
         initSession();
         Criteria cr = session.createCriteria(Zone.class);
         cr.setProjection(Projections.count("id"));
@@ -388,21 +416,21 @@ public class HibernateRelationsProvider {
         return count;
     }
 
-    public long checkTimeHQL() {
+    public long checkTimeHQL() throws IOException {
         long timeStart = System.currentTimeMillis();
         getZoneCountHQL();
         long timeEnd = System.currentTimeMillis();
         return timeEnd - timeStart;
     }
 
-    public long checkTimeNative() {
+    public long checkTimeNative() throws IOException {
         long timeStart = System.currentTimeMillis();
         getZoneCountNative();
         long timeEnd = System.currentTimeMillis();
         return timeEnd - timeStart;
     }
 
-    public long checkTimeCriteria() {
+    public long checkTimeCriteria() throws IOException {
         long timeStart = System.currentTimeMillis();
         getZoneCountCriteria();
         long timeEnd = System.currentTimeMillis();

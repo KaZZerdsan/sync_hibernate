@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Discovery",
+        "language": ["Russian", "English"],
+        "status": "false",
+        "features": {
+            "Food": "Yes",
+            "Water": "Yes",
+            "Alcohol": "No"
+        },
+        "speakers": ["Vasily", "Viktor", "Vladimir"],
+        "speakerList": [
+            {
+                "name": "Vladislav"
+            },
+            {
+                "name": "Vladilen"
+            }
+        ]
+    }
+] 

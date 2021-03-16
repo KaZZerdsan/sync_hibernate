@@ -1,0 +1,39 @@
+[
+    {
+        "id": 1,
+        "name": "Discovery",
+        "dateStart": 1615856911478,
+        "dateEnd": 1615855911478,
+        "status": false,
+        "manager": {
+            "name": "Alex"
+        },
+        "channelList": [
+            {
+                "name": "Russia",
+                "language": "Russian",
+                "status": true,
+                "speakers": [
+                    {
+                        "name": "Dmitriy"
+                    }
+                ]
+            },{
+                "name": "England",
+                "language": "English",
+                "speakers": [
+                    {
+                        "name": "Denis"
+                    }
+                ]
+            }
+        ],
+        "guests": [
+            {
+                "name": "Eugene"
+            },{
+                "name": "Jason"
+            }
+        ]
+    }
+]

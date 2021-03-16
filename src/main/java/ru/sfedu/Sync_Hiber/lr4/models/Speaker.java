@@ -21,7 +21,7 @@ public class Speaker {
     @Override
     public String toString() {
         return "Speaker{" +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 '}';
     }
 }

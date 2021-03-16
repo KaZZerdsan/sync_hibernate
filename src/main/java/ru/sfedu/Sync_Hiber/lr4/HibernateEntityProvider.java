@@ -9,13 +9,14 @@ import ru.sfedu.Sync_Hiber.Constants;
 import ru.sfedu.Sync_Hiber.lr4.models.Channel;
 import ru.sfedu.Sync_Hiber.lr4.utils.HibernateUtil;
 
+import java.io.IOException;
 import java.util.List;
 
 public class HibernateEntityProvider {
     private Logger log = LogManager.getLogger(HibernateEntityProvider.class);
     private Session session;
 
-    private void initSession() {
+    private void initSession() throws IOException {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         session = sessionFactory.openSession();
     }
@@ -24,7 +25,7 @@ public class HibernateEntityProvider {
         session.close();
     }
 
-    public Channel createChannel(Channel channel) {
+    public Channel createChannel(Channel channel) throws IOException {
         initSession();
         Transaction tx = session.beginTransaction();
         channel.setId((Long) session.save(channel));
@@ -32,7 +33,7 @@ public class HibernateEntityProvider {
         return channel;
     }
 
-    public List<Channel> getChannels() {
+    public List<Channel> getChannels() throws IOException {
         initSession();
         try {
             String query = String.format(Constants.GET_QUERY, Channel.class.getSimpleName());
@@ -49,22 +50,25 @@ public class HibernateEntityProvider {
         }
     }
 
-    public Channel getChannelById(long id) {
+    public Channel getChannelById(long id) throws IOException {
         initSession();
         try {
             Channel channel = session.get(Channel.class, id);
             log.debug(channel);
             close();
+            if (channel == null) {
+                channel = new Channel();
+                log.error("Not found.");
+            }
             return channel;
         }
         catch(Exception e) {
-            log.error("Not found.");
             close();
             return new Channel();
         }
     }
 
-    public Boolean deleteChannel(long id) {
+    public Boolean deleteChannel(long id) throws IOException {
         initSession();
         Channel channel = new Channel();
         channel.setId(id);
@@ -81,7 +85,7 @@ public class HibernateEntityProvider {
         }
     }
 
-    public Channel updateChannel(Channel channel) {
+    public Channel updateChannel(Channel channel) throws IOException {
         initSession();
         Transaction tr = session.beginTransaction();
         session.update(channel);

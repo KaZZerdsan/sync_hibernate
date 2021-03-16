@@ -8,6 +8,10 @@ import org.hibernate.service.ServiceRegistry;
 import ru.sfedu.Sync_Hiber.lr3.singleTable.models.Admin;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Properties;
 
 public class HibernateUtil {
 
@@ -15,12 +19,21 @@ public class HibernateUtil {
 
     private static SessionFactory sessionFactory;
 
-    public static SessionFactory getSessionFactory() {
+    public static SessionFactory getSessionFactory() throws IOException {
         if (sessionFactory == null) {
             // loads configuration and mappings
             Configuration configuration;
             if (CUSTOM_CONFIG_PATH != null) {
-                configuration = new Configuration().configure(new File(CUSTOM_CONFIG_PATH));
+                Properties props = new Properties();
+                if (CUSTOM_CONFIG_PATH.contains("properties")) {
+                    InputStream is = HibernateUtil.class.getResourceAsStream(CUSTOM_CONFIG_PATH);
+                    props.load(is);
+                    configuration = new Configuration();
+                    configuration.addProperties(props);
+                } else {
+                    URL r1 = HibernateUtil.class.getResource(CUSTOM_CONFIG_PATH);
+                    configuration = new Configuration().configure(r1);
+                }
             } else {
                 configuration = new Configuration();
             }

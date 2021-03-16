@@ -7,6 +7,7 @@ import ru.sfedu.Sync_Hiber.Constants;
 import ru.sfedu.Sync_Hiber.lr5.models.*;
 import ru.sfedu.Sync_Hiber.lr5.utils.GenerateEntity;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -16,13 +17,13 @@ public class HibernateRelationsProviderTest {
     private Logger log = LogManager.getLogger(HibernateRelationsProviderTest.class);
 
     @Test
-    public void getManagers() {
+    public void getManagers() throws IOException {
         List<Manager> managerList = dp.getManagers();
         log.info(managerList);
     }
 
     @Test
-    public void createManager() {
+    public void createManager() throws IOException {
         Manager manager = new Manager();
         manager.setName("Mikhail");
         dp.createManager(manager);
@@ -30,13 +31,13 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void getManagerById() {
+    public void getManagerById() throws IOException {
         Manager manager = dp.getManagerById(6);
         log.info(manager);
     }
 
     @Test
-    public void deleteManager() {
+    public void deleteManager() throws IOException {
         List<Manager> managerList = dp.getManagers();
         long id = managerList.get(0).getId();
         Boolean hasDeleted = dp.deleteManager(id);
@@ -44,7 +45,7 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void updateManager() {
+    public void updateManager() throws IOException {
         List<Manager> managerList = dp.getManagers();
         Manager manager = managerList.get(0);
         manager.setName(manager.getName() + "_new");
@@ -53,13 +54,13 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void getSpeakers() {
+    public void getSpeakers() throws IOException {
         List<Speaker> speakerList = dp.getSpeakers();
         log.info(speakerList);
     }
 
     @Test
-    public void createSpeaker() {
+    public void createSpeaker() throws IOException {
         Speaker speaker = new Speaker();
         speaker.setName("Eugene");
         speaker = dp.createSpeaker(speaker);
@@ -67,13 +68,13 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void getSpeakerById() {
+    public void getSpeakerById() throws IOException {
         Speaker speaker = dp.getSpeakerById(1);
         log.info(speaker);
     }
 
     @Test
-    public void deleteSpeaker() {
+    public void deleteSpeaker() throws IOException {
         List<Speaker> speakerList = dp.getSpeakers();
         long id = speakerList.get(0).getId();
         Boolean hasDeleted = dp.deleteSpeaker(id);
@@ -81,7 +82,7 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void updateSpeaker() {
+    public void updateSpeaker() throws IOException {
         List<Speaker> speakerList = dp.getSpeakers();
         Speaker speaker = speakerList.get(0);
         speaker.setName(speaker.getName() + "_new");
@@ -90,13 +91,13 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void getChannels() {
+    public void getChannels() throws IOException {
         List<Channel> channelList = dp.getChannels();
         log.info(channelList);
     }
 
     @Test
-    public void createChannel() {
+    public void createChannel() throws IOException {
         List<Speaker> speakerList = GenerateEntity.generateSpeakers(5);
         Channel channel = new Channel();
         channel.setLanguage("Russian");
@@ -108,13 +109,13 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void getChannelById() {
+    public void getChannelById() throws IOException {
         Channel channel = dp.getChannelById(2);
         log.info(channel);
     }
 
     @Test
-    public void deleteChannel() {
+    public void deleteChannel() throws IOException {
         List<Channel> channelList = dp.getChannels();
         long id = channelList.get(0).getId();
         Boolean hasDeleted = dp.deleteChannel(id);
@@ -122,7 +123,7 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void updateChannel() {
+    public void updateChannel() throws IOException {
         List<Channel> channelList = dp.getChannels();
         Channel channel = channelList.get(0);
         channel.setName(channel.getName() + "_new");
@@ -131,13 +132,13 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void getZones() {
+    public void getZones() throws IOException {
         List<Zone> zoneList = dp.getZones();
         log.info(zoneList);
     }
 
     @Test
-    public void createZone() {
+    public void createZone() throws IOException {
         Zone zone = new Zone();
 
         List<Guest> guests = GenerateEntity.generateGuests(3);
@@ -160,13 +161,13 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void getZoneById() {
+    public void getZoneById() throws IOException {
         Zone zone = dp.getZoneById(1);
         log.info(zone);
     }
 
     @Test
-    public void deleteZone() {
+    public void deleteZone() throws IOException {
         List<Zone> zoneList = dp.getZones();
         long id = zoneList.get(0).getId();
         Boolean hasDeleted = dp.deleteZone(id);
@@ -174,7 +175,7 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void updateZone() {
+    public void updateZone() throws IOException {
         List<Zone> zoneList = dp.getZones();
         Zone zone = zoneList.get(0);
         zone.setName(zone.getName() + "_new");
@@ -183,7 +184,7 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void createGuest() {
+    public void createGuest() throws IOException {
         Guest guest = new Guest();
         guest.setName("Vasily");
         dp.createGuest(guest);
@@ -191,19 +192,19 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void getGuests() {
+    public void getGuests() throws IOException {
         List<Guest> guestList = dp.getGuests();
         log.info(guestList);
     }
 
     @Test
-    public void getGuestById() {
+    public void getGuestById() throws IOException {
         Guest guest = dp.getGuestById(1);
         log.info(guest);
     }
 
     @Test
-    public void deleteGuest() {
+    public void deleteGuest() throws IOException {
         List<Guest> guestList = dp.getGuests();
         long id = guestList.get(0).getId();
         Boolean hasDeleted = dp.deleteGuest(id);
@@ -211,7 +212,7 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void updateGuest() {
+    public void updateGuest() throws IOException {
         List<Guest> guestList = dp.getGuests();
         Guest guest = guestList.get(0);
         guest.setName(guest.getName() + "_new");
@@ -220,35 +221,35 @@ public class HibernateRelationsProviderTest {
     }
 
     @Test
-    public void getZoneCountNative() {
+    public void getZoneCountNative() throws IOException {
         BigInteger count = dp.getZoneCountNative();
         log.info(count);
     }
 
     @Test
-    public void getZoneCountHQL() {
+    public void getZoneCountHQL() throws IOException {
         Long count = dp.getZoneCountHQL();
         log.info(count);
     }
 
     @Test
-    public void getZoneCountCriteria() {
+    public void getZoneCountCriteria() throws IOException {
         Long count = dp.getZoneCountCriteria();
         log.info(count);
     }
 
     @Test
-    public void checkTimeHQL() {
+    public void checkTimeHQL() throws IOException {
         log.info(String.format(Constants.TIME_TAKEN, (double) dp.checkTimeHQL() / 1000L));
     }
 
     @Test
-    public void checkTimeNative() {
-        log.info(String.format(Constants.TIME_TAKEN, (double) dp.checkTimeHQL() / 1000L));
+    public void checkTimeNative() throws IOException {
+        log.info(String.format(Constants.TIME_TAKEN, (double) dp.checkTimeNative() / 1000L));
     }
 
     @Test
-    public void checkTimeCriteria() {
+    public void checkTimeCriteria() throws IOException {
         log.info(String.format(Constants.TIME_TAKEN, (double) dp.checkTimeCriteria() / 1000L));
     }
 

@@ -1,7 +1,6 @@
 package ru.sfedu.Sync_Hiber;
 
 public class Constants {
-    public static final String LOG_NO_ARGS = "No arguments were given";
 
     //  LR 1
     public static final String LOG_DB_SIZE_IN_MB = "DB size is %s Mb";
@@ -23,4 +22,12 @@ public class Constants {
     public static final String ZONE = "Zone";
     public static final String GET_COUNT = "select count(*) from %s";
     public static final String TIME_TAKEN = "Time: %ss";
+
+    //   CLI
+
+    public static final String LOG_NO_ARGS = "No arguments were given";
+    public static final String TOO_FEW_ARGS = "Too few arguments...";
+    public static final String BAD_ARG = "Bad Argument was given";
+
+    public static final String BAD_PATH = "Bad path to JSON or file is corrupted...";
 }
