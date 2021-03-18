@@ -149,7 +149,6 @@ public class HibernateRelationsProviderTest {
 
         Manager manager = new Manager();
         manager.setName("Alexey");
-        manager = dp.createManager(manager);
         zone.setManager(manager);
 
         zone.setName("Discovery");
@@ -168,16 +167,20 @@ public class HibernateRelationsProviderTest {
 
     @Test
     public void deleteZone() throws IOException {
-        List<Zone> zoneList = dp.getZones();
-        long id = zoneList.get(0).getId();
+        Zone zone = new Zone();
+        zone.setName("Discovery");
+        zone = dp.createZone(zone);
+        long id = zone.getId();
         Boolean hasDeleted = dp.deleteZone(id);
         log.info(hasDeleted);
     }
 
     @Test
     public void updateZone() throws IOException {
-        List<Zone> zoneList = dp.getZones();
-        Zone zone = zoneList.get(0);
+        Zone zone = new Zone();
+        zone.setName("Discovery");
+        zone = dp.createZone(zone);
+        log.info(zone);
         zone.setName(zone.getName() + "_new");
         zone = dp.updateZone(zone);
         log.info(zone);
@@ -205,19 +208,23 @@ public class HibernateRelationsProviderTest {
 
     @Test
     public void deleteGuest() throws IOException {
-        List<Guest> guestList = dp.getGuests();
-        long id = guestList.get(0).getId();
+        Guest guest = new Guest();
+        guest.setName("Erik");
+        guest = dp.createGuest(guest);
+        long id = guest.getId();
         Boolean hasDeleted = dp.deleteGuest(id);
         log.info(hasDeleted);
     }
 
     @Test
     public void updateGuest() throws IOException {
-        List<Guest> guestList = dp.getGuests();
-        Guest guest = guestList.get(0);
+        Guest guest = new Guest();
+        guest.setName("Anthony");
+        guest = dp.createGuest(guest);
+        log.info(guest.getName());
         guest.setName(guest.getName() + "_new");
         guest = dp.updateGuest(guest);
-        log.info(guest);
+        log.info(guest.getName());
     }
 
     @Test

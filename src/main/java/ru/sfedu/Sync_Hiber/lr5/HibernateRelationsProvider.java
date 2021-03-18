@@ -21,11 +21,15 @@ public class HibernateRelationsProvider {
 
     private void initSession() throws IOException {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        if (sessionFactory.isClosed()) {
+            log.error("Session is closed");
+        }
         session = sessionFactory.openSession();
     }
 
     private void close() {
         session.close();
+        session = null;
     }
 
     public Guest createGuest(Guest guest) throws IOException {
@@ -321,17 +325,24 @@ public class HibernateRelationsProvider {
 
     public Zone createZone(Zone zone) throws IOException {
         for (Channel channel : zone.getChannelList()) {
-            createChannel(channel);
+            if (channel.getId() == null) {
+                log.debug(channel.getId());
+                createChannel(channel);
+            }
         }
         for (Guest guest : zone.getGuests()) {
-            createGuest(guest);
+            if ((Long)guest.getId() == null) {
+                log.info(guest.getId());
+                createGuest(guest);
+            }
         }
-        createManager(zone.getManager());
+        if (zone.getManager().getId() == null) {
+            createManager(zone.getManager());
+        }
         initSession();
         Transaction tx = session.beginTransaction();
         zone.setId((long) session.save(zone));
-        tx.commit();
-        log.debug(zone);
+//        tx.commit();
         close();
         return zone;
     }
@@ -375,15 +386,19 @@ public class HibernateRelationsProvider {
 
     public Zone updateZone (Zone zone) throws IOException {
         for (Channel channel : zone.getChannelList()) {
-            createChannel(channel);
+            if (channel.getId() == null) {
+                createChannel(channel);
+            }
         }
         for (Guest guest : zone.getGuests()) {
-            createGuest(guest);
+            if ((Long)guest.getId() == null) {
+                createGuest(guest);
+            }
         }
         initSession();
         Transaction tr = session.beginTransaction();
-        session.update(zone);
         tr.commit();
+        session.update(zone);
         close();
         return zone;
     }

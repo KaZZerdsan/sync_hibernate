@@ -1,6 +1,7 @@
 package ru.sfedu.Sync_Hiber.lr5.models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,23 +23,23 @@ public class Zone {
     private long dateEnd;
 
     @Column
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<Channel> channelList;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Channel> channelList = new ArrayList<>();
 
     @Column(columnDefinition = "TINYINT")
     private Boolean status;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "man_id", referencedColumnName = "id")
-    private Manager manager;
+    private Manager manager = new Manager();
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "ZONE_GUESTS",
             joinColumns = @JoinColumn(name = "Zone_id"),
             inverseJoinColumns = @JoinColumn(name = "Guest_id")
     )
-    private List<Guest> guests;
+    private List<Guest> guests = new ArrayList<>();
 
     public Zone() {}
 
