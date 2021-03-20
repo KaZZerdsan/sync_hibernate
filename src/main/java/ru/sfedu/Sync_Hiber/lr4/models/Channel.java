@@ -23,7 +23,7 @@ public class Channel {
     @Column
     private Set<String> language;
 
-    @Column(columnDefinition = "TINYINT")
+    @Column()
     private Boolean status;
 
     @ElementCollection

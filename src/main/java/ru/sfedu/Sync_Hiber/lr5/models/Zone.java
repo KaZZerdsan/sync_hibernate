@@ -1,12 +1,15 @@
 package ru.sfedu.Sync_Hiber.lr5.models;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table
+@Table(name = "zone")
 public class Zone {
     @Id
     @GeneratedValue(generator = "increment")
@@ -23,17 +26,17 @@ public class Zone {
     private long dateEnd;
 
     @Column
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<Channel> channelList = new ArrayList<>();
 
-    @Column(columnDefinition = "TINYINT")
+    @Column()
     private Boolean status;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "man_id", referencedColumnName = "id")
     private Manager manager = new Manager();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "ZONE_GUESTS",
             joinColumns = @JoinColumn(name = "Zone_id"),

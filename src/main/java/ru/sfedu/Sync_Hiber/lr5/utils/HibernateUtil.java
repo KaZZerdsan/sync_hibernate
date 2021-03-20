@@ -8,9 +8,9 @@ import org.hibernate.service.ServiceRegistry;
 import ru.sfedu.Sync_Hiber.lr5.models.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Properties;
 
 public class HibernateUtil {
@@ -22,20 +22,19 @@ public class HibernateUtil {
     public static SessionFactory getSessionFactory() throws IOException {
         if (sessionFactory == null) {
             // loads configuration and mappings
-            Configuration configuration;
+            Configuration configuration = new Configuration();
             if (CUSTOM_CONFIG_PATH != null) {
                 Properties props = new Properties();
                 if (CUSTOM_CONFIG_PATH.contains("properties")) {
-                    InputStream is = HibernateUtil.class.getResourceAsStream(CUSTOM_CONFIG_PATH);
-                    props.load(is);
-                    configuration = new Configuration();
+                    File file = new File(CUSTOM_CONFIG_PATH);
+                    InputStream in = new FileInputStream(file);
+                    props.load(in);
                     configuration.addProperties(props);
+                    System.out.println(props.toString());
+                    in.close();
                 } else {
-                    URL r1 = HibernateUtil.class.getResource(CUSTOM_CONFIG_PATH);
-                    configuration = new Configuration().configure(r1);
+                    configuration.configure(new File(CUSTOM_CONFIG_PATH));
                 }
-            } else {
-                configuration = new Configuration();
             }
             ServiceRegistry serviceRegistry
                     = new StandardServiceRegistryBuilder()

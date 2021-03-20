@@ -10,3 +10,11 @@ services:
       - ./docker/db/mysql/log:/var/log
     ports:
       - "33063:3306"
+  pg:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 12345678
+      POSTGRES_DB: sync_hiber
+    ports:
+      - "54321:5432"

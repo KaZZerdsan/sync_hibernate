@@ -18,11 +18,11 @@ public class Channel {
 
     private String language;
 
-    @Column(columnDefinition = "TINYINT")
+    @Column()
     private Boolean status;
 
     @Column
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<Speaker> speakers;
 
     public Channel() {}
